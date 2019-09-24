@@ -8,6 +8,7 @@
 #include "postmaster/postmaster.h"
 #include "storage/ipc.h"
 #include "utils/builtins.h"
+#include "utils/guc.h"
 
 #ifdef PG_MODULE_MAGIC
 PG_MODULE_MAGIC;
@@ -99,6 +100,7 @@ ParProcessUtility(PlannedStmt *pstmt,
 	if (nodeTag(parsetree) == T_IndexStmt
 		&& !((IndexStmt*)parsetree)->concurrent
 		&& context == PROCESS_UTILITY_TOPLEVEL
+		&& strcmp(application_name, "pg_parallizator") != 0 /* avoid recursion  in case of extension preload */
 		&& max_workers > 0)
 	{
 		char postmaster_port[8];
