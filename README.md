@@ -9,3 +9,8 @@ pg_parallizator establishes local connection to the database, so such access sho
 pg_parallizator run in parallel only explicitly created indexes (not one created implicitly during table creation,
 such as primary key index). Also indexes created with CONCURRENTLY qualifier are not considered (because building them
 in parallel may cause deadlock).
+
+To use pg_parallizator please load correspondent library using the following command:
+
+    LOAD 'pg_parallizator';
+
