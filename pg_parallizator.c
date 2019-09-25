@@ -134,6 +134,20 @@ ParProcessUtility(PlannedStmt *pstmt,
 		elog(LOG, "Failed to execute concurrently query %s", queryString);
 		PQfinish(con);
 	}
+	else if (nodeTag(parsetree) == T_AlterTableStmt)
+	{
+		AlterTableStmt* alter = (AlterTableStmt*)parsetree;
+		ListCell* cell;
+		foreach (cell, alter->cmds)
+		{
+			AlterTableCmd* cmd = (AlterTableCmd*)lfirst(cell);
+			if (cmd->subtype == AT_ClusterOn)
+			{
+				WaitAllWorkers(0, 0);
+				break;
+			}
+		}
+	}
 	if (PreviousProcessUtilityHook != NULL)
 	{
 		PreviousProcessUtilityHook(pstmt, queryString,
